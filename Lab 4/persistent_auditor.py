@@ -1,100 +1,88 @@
 def load_inventory():
+    orders = []
+
     try:
         file = open("inventory.txt", "r")
-        lines = file.readlines()
+
+        for line in file:
+            line = line.strip()
+
+            if line != "":
+                parts = line.split(",")
+
+                order_id = int(parts[0])
+                product_name = parts[1].strip()
+                quantity = int(parts[2])
+
+                orders.append([order_id, product_name, quantity])
+
         file.close()
 
-        if len(lines) == 0:
-            return 0, []
-
-        total = int(lines[0].strip())
-
-        if len(lines) > 1:
-            history = eval(lines[1].strip())
-        else:
-            history = []
-
-        return total, history
-
     except FileNotFoundError:
-        return 0, []
+        pass
+
+    return orders
 
 
-def save_inventory(total, history):
+def save_inventory(orders):
     file = open("inventory.txt", "w")
-    file.write(str(total) + "\n")
-    file.write(str(history))
+
+    for order in orders:
+        file.write(
+            str(order[0]) + "," +
+            order[1] + "," +
+            str(order[2]) + "\n"
+        )
+
     file.close()
 
 
-inventory, transaction_history = load_inventory()
-log = 0
+orders = load_inventory()
 
 
-def get_valid_input():
-    global log
+print("Current Orders:")
+print()
 
-    while True:
-        try:
-            value = input("Enter the inventory count (must be a non-negative integer): ").strip()
-
-            if value.lower() == "quit":
-                return None
-
-            return int(value)
-
-        except ValueError:
-            print("Please enter an integer only.")
-            log += 1
+for order in orders:
+    print(str(order[0]) + ", " + order[1] + ", " + str(order[2]))
 
 
-def process_delivery(current_total, new_value):
-    if new_value < 0:
-        print("Inventory count cannot be negative.")
-        return current_total, 1
-
-    new_total = current_total + new_value
-
-    if new_total > 500:
-        print("Inventory count is over limit.")
-        return current_total, 1
-
-    return new_total, 0
-
-
-def calculate_tax(amount):
-    return round(amount * 0.10, 2)
-
-
-def generate_report(total_units, failed_attempts):
-    print("Total Deliveries Processed:", total_units)
-    print("Number of Failed/Rejected Entries:", failed_attempts)
-    print("Transaction History:", transaction_history)
-    print("Exiting the program.")
+product_name = input("\nEnter Product Name: ")
 
 
 while True:
-    value = get_valid_input()
+    try:
+        quantity = int(input("Enter Quantity: "))
 
-    if value is None:
-        save_inventory(inventory, transaction_history)
-        generate_report(inventory, log)
-        break
-
-    inventory, errors = process_delivery(inventory, value)
-    log += errors
-
-    if errors:
-        if value < 0:
+        if quantity < 0:
+            print("Quantity cannot be negative.")
             continue
 
-        save_inventory(inventory, transaction_history)
-        generate_report(inventory, log)
         break
 
-    transaction_history.append(value)
+    except ValueError:
+        print("Please enter an integer only.")
 
-    print("Updated Inventory Count:", inventory)
 
-    tax = calculate_tax(inventory)
-    print("Tax Calculated:", tax)
+if len(orders) == 0:
+    new_order_id = 1001
+else:
+    new_order_id = orders[-1][0] + 1
+
+
+new_order = [new_order_id, product_name, quantity]
+
+orders.append(new_order)
+
+
+print("\nNew Order Added:")
+print(
+    str(new_order[0]) + "," +
+    new_order[1] + "," +
+    str(new_order[2])
+)
+
+
+save_inventory(orders)
+
+print("\nOrder successfully saved to inventory.txt")
