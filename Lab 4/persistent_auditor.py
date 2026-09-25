@@ -14,6 +14,7 @@ def load_inventory():
 
 inventory = load_inventory()
 log = 0
+transaction_history=[]
 
 def get_valid_input():
     global log
@@ -43,6 +44,7 @@ def calculate_tax(amount):
 def generate_report(total_units, failed_attempts):
     print("Total Deliveries Processed:", total_units)
     print("Number of Failed/Rejected Entries:", failed_attempts)
+    print("Transaction History:", transaction_history)
     print("Exiting the program.")
 
 while True:
@@ -58,6 +60,7 @@ while True:
             continue
         generate_report(inventory, log)
         break
+    transaction_history.append(value)
 
     print("Updated Inventory Count:", inventory)
     tax = calculate_tax(inventory)
