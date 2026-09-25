@@ -1,16 +1,22 @@
 def load_inventory():
     try:
         file = open("inventory.txt", "r")
-        data = file.read()
+        lines = file.readlines()
         file.close()
 
-        if data == "":
+        if len(lines) == 0:
             return 0
 
-        return int(data)
+        return int(lines[0].strip())
 
     except FileNotFoundError:
         return 0
+    
+def save_inventory(total, history):
+    file = open("inventory.txt", "w")
+    file.write(str(total) + "\n")
+    file.write(str(history))
+    file.close()
 
 inventory = load_inventory()
 log = 0
@@ -49,17 +55,22 @@ def generate_report(total_units, failed_attempts):
 
 while True:
     value = get_valid_input()
+
     if value is None:
+        save_inventory(inventory, transaction_history)
         generate_report(inventory, log)
         break
 
     inventory, errors = process_delivery(inventory, value)
     log += errors
+
     if errors:
         if value < 0:
             continue
+        save_inventory(inventory, transaction_history)
         generate_report(inventory, log)
         break
+
     transaction_history.append(value)
 
     print("Updated Inventory Count:", inventory)
