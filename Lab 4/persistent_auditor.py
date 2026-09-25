@@ -5,53 +5,73 @@ def load_inventory():
         file.close()
 
         if len(lines) == 0:
-            return 0
+            return 0, []
 
-        return int(lines[0].strip())
+        total = int(lines[0].strip())
+
+        if len(lines) > 1:
+            history = eval(lines[1].strip())
+        else:
+            history = []
+
+        return total, history
 
     except FileNotFoundError:
-        return 0
-    
+        return 0, []
+
+
 def save_inventory(total, history):
     file = open("inventory.txt", "w")
     file.write(str(total) + "\n")
     file.write(str(history))
     file.close()
 
-inventory = load_inventory()
+
+inventory, transaction_history = load_inventory()
 log = 0
-transaction_history=[]
+
 
 def get_valid_input():
     global log
+
     while True:
         try:
             value = input("Enter the inventory count (must be a non-negative integer): ").strip()
-            if value.lower() == 'quit':
+
+            if value.lower() == "quit":
                 return None
+
             return int(value)
+
         except ValueError:
             print("Please enter an integer only.")
             log += 1
+
 
 def process_delivery(current_total, new_value):
     if new_value < 0:
         print("Inventory count cannot be negative.")
         return current_total, 1
+
     new_total = current_total + new_value
+
     if new_total > 500:
-        print('Inventory count is over limit.')
+        print("Inventory count is over limit.")
         return current_total, 1
+
     return new_total, 0
+
 
 def calculate_tax(amount):
     return round(amount * 0.10, 2)
+
 
 def generate_report(total_units, failed_attempts):
     print("Total Deliveries Processed:", total_units)
     print("Number of Failed/Rejected Entries:", failed_attempts)
     print("Transaction History:", transaction_history)
     print("Exiting the program.")
+
 
 while True:
     value = get_valid_input()
@@ -67,6 +87,7 @@ while True:
     if errors:
         if value < 0:
             continue
+
         save_inventory(inventory, transaction_history)
         generate_report(inventory, log)
         break
@@ -74,6 +95,6 @@ while True:
     transaction_history.append(value)
 
     print("Updated Inventory Count:", inventory)
+
     tax = calculate_tax(inventory)
     print("Tax Calculated:", tax)
-    
