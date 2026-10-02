@@ -16,5 +16,11 @@
         "name": "Keyboard",
         "price": 45.0,
         "stock": 25
+    },
+    {
+        "id": "P004",
+        "name": "SIT Gift Box",
+        "price": 2.0,
+        "stock": 500
     }
 ]
