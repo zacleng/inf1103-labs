@@ -1,4 +1,6 @@
-inventory = [
+import json
+
+default_inventory = [
     {
         "id": "P001",
         "name": "Laptop",
@@ -19,5 +21,37 @@ inventory = [
     }
 ]
 
+def load_inventory():
+    try:
+        with open("inventory.json", "r") as file:
+            inventory = json.load(file)
 
-print(inventory)
+        print("inventory.json found.")
+        print("Inventory loaded successfully.")
+
+        return inventory
+
+    except FileNotFoundError:
+        print("inventory.json not found.")
+        print("Starting with default inventory.")
+
+        return default_inventory
+
+inventory = load_inventory()
+
+def display_all():
+    print("Current Inventory")
+    print("------------------------------------------------")
+
+    for product in inventory:
+        print(
+            f"ID: {product['id']} | "
+            f"Name: {product['name']} | "
+            f"Price: ${product['price']:.2f} | "
+            f"Stock: {product['stock']}"
+        )
+
+    print("------------------------------------------------")
+
+
+display_all()
