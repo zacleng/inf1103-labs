@@ -33,11 +33,3 @@ class Inventory:
         return self.__products
 
 
-from product import Product
-
-inventory = Inventory()
-
-inventory.add_product(Product("P001", "Laptop", 1200.00, 15))
-inventory.add_product(Product("P002", "Mouse", 25.50, 40))
-
-inventory.display_all()
