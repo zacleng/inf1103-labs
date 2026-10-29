@@ -2,3 +2,4 @@
 1002,Keyboard,1
 1003,USB Cable,3
 1004,laptop,2
+1005,phone,3
